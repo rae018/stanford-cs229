@@ -1,5 +1,5 @@
 import numpy as np
-import util
+from stanford_cs229.utils.util import *
 
 # Below is used to evalue the probability based on Gaussian PDF
 def gaus_pdf(x,mu,Sigma):
