@@ -5,7 +5,7 @@ import util
 def gaus_pdf(x,mu,Sigma):
     d = len(x)
     prob = np.exp(-(1/2)*(x-mu).T@np.linalg.solve(Sigma,(x-mu)))
-    prob *= (np.linalg.det(Sigma)**(-1/2))/((2*np.pi)**(d/2))
+    prob = prob*(np.linalg.det(Sigma)**(-1/2))/((2*np.pi)**(d/2))
     return prob
 
 # The loss function for Gaussian Discriminant  Analysis
@@ -20,12 +20,12 @@ def loss(X,z,mu,Sigma,phi):
 def main(train_path, valid_path, save_path):
     #X,_ = util.load_dataset(train_path, add_intercept=False) # No labels
 
-    mean1 = [0,0]
+    mean1 = [-2,-2]
     mean2 = [8,5]
     cov1 = np.identity(2)
     cov2 = np.identity(2)
-    X1 = np.random.multivariate_normal(mean1,cov1,1600)
-    X2 = np.random.multivariate_normal(mean2,cov2,800)
+    X1 = np.random.multivariate_normal(mean1,cov1,1000)
+    X2 = np.random.multivariate_normal(mean2,cov2,1000)
     X = np.vstack([X1,X2])
 
     # k is the number of classes
@@ -41,12 +41,12 @@ def main(train_path, valid_path, save_path):
     # Sigma is size (dim, dim, total classes)
     w = np.ones((n,k))/k
     #mu = np.random.randn(d,k) # Random Gaussian centroids
-    mu = np.array([[8,-5],[8,-5]])
+    mu = np.array([[8.,-5.],[8.,8.]])
     Sigma = np.zeros((d,d,k))
     phi = np.ones(k)/k # We start with no prior distribution
     for j in range(k):
         Sigma[:,:,j] = np.identity(d) # Initialize Sigma to identity for invertibility
-
+    print(X)
     while np.abs(loss_prev-loss_cur)>10**(-5):
         loss_prev = loss_cur
         # E step
@@ -63,7 +63,6 @@ def main(train_path, valid_path, save_path):
         for j in range(k):
             mu[:,j] = sum([w[i,j]*X[i,:] for i in range(n)]) # MLE for mu
             mu[:,j] = (1./sum_w_vec[j])*mu[:,j]
-            #print(mu[:,j])
             Sigma[:,:,j] = sum([w[i,j]*np.outer((X[i,:]-mu[:,j]),(X[i,:]-mu[:,j])) for i in range(n)])
             Sigma[:,:,j] = Sigma[:,:,j]/sum_w_vec[j]
         loss_cur = loss(X,w,mu,Sigma,phi) # z not important actually
