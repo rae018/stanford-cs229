@@ -1,5 +1,17 @@
 import matplotlib.pyplot as plt
 import numpy as np
+import csv
+
+def load_our_data(csvpath):
+    X = []
+    with open(csvpath,'r') as csvfile:
+        plots = csv.reader(csvfile, delimiter=',')
+        for idx,row in enumerate(plots):
+            if idx==0: # Skip over the first row
+                continue
+            X.append([float(elem) for elem in row])
+    return np.array(X)
+
 
 def add_intercept(x):
     """Add intercept to matrix x.

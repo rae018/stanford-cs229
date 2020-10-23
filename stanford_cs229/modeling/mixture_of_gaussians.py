@@ -1,6 +1,10 @@
 import numpy as np
-from stanford_cs229.utils.util import *
 
+import sys
+sys.path.append('../utils')
+import util
+import csv_plotter
+import math
 # Below is used to evalue the probability based on Gaussian PDF
 def gaus_pdf(x,mu,Sigma):
     d = len(x)
@@ -18,18 +22,30 @@ def loss(X,z,mu,Sigma,phi):
     return loss
 
 def main(train_path, valid_path, save_path):
-    #X,_ = util.load_dataset(train_path, add_intercept=False) # No labels
+    if type(train_path) is list: # Sometimes we want to combine data
+        X = []
+        for path in train_path:
+            X.append(util.load_our_data(path))
+        X = np.vstack(X)
+    else:
+        X = util.load_our_data(train_path)
 
-    mean1 = [-2,-2]
-    mean2 = [8,5]
-    cov1 = np.identity(2)
-    cov2 = np.identity(2)
-    X1 = np.random.multivariate_normal(mean1,cov1,1000)
-    X2 = np.random.multivariate_normal(mean2,cov2,1000)
-    X = np.vstack([X1,X2])
-
+    X = X[:,:3] # We are only using accelerometer data
+    #print(X)
+    n = len(X[:,0])
+    """
+    X_merged = [] # Now we combine every 3 rows
+    for i in range(n):
+        new_row = X[3*i:3*i+3,:].flatten()
+        if len(new_row) == 3*3:
+            X_merged.append(X[3*i:3*i+3,:].flatten())
+    X_merged = np.vstack(X_merged)
+    X = X_merged
+    print(X_merged)
+    """
+    print(X)
     # k is the number of classes
-    k = 2
+    k = 5
     n = len(X[:,0])
     d = len(X[0,:])
 
@@ -41,12 +57,12 @@ def main(train_path, valid_path, save_path):
     # Sigma is size (dim, dim, total classes)
     w = np.ones((n,k))/k
     #mu = np.random.randn(d,k) # Random Gaussian centroids
-    mu = np.array([[8.,-5.],[8.,8.]])
+    mu = 20*np.random.randn(d,k)+350
     Sigma = np.zeros((d,d,k))
     phi = np.ones(k)/k # We start with no prior distribution
     for j in range(k):
-        Sigma[:,:,j] = np.identity(d) # Initialize Sigma to identity for invertibility
-    print(X)
+        Sigma[:,:,j] = 50*np.identity(d) # Initialize Sigma to identity for invertibility
+
     while np.abs(loss_prev-loss_cur)>10**(-5):
         loss_prev = loss_cur
         # E step
@@ -54,25 +70,44 @@ def main(train_path, valid_path, save_path):
             #print('gaus',np.array([gaus_pdf(X[i,:],mu[:,j],Sigma[:,:,j]) for j in range(k)]))
             w[i,:] = phi*np.array([gaus_pdf(X[i,:],mu[:,j],Sigma[:,:,j]) for j in range(k)])
             w[i,:] = w[i,:]/sum(w[i,:]) # Now normalize
-
+            #for elem in w[i,:]:
+            #    if math.isnan(elem):
+            #        print(w[i,:])
+        #print(w)
         # M step
         #print('w',w)
-        sum_w_vec = np.sum(w, axis=0) # Sum along the rows
+        sum_w_vec = np.zeros(k)
+        nan_exists = False
+        for i in range(n):
+            nan_exists = False # Reset nan exists flag
+            for elem in w[i,:]:
+                if math.isnan(elem):
+                    nan_exists = True
+            if nan_exists:
+                continue # Don't include this row if there is a nan
+            sum_w_vec += w[i,:]
+        #print(sum_w_vec)
+        #sum_w_vec = np.sum(w, axis=0) # Sum along the rows
         #print('sum_w_vec',sum_w_vec)
+        #print(sum_w_vec)
         phi = (1./n)*sum_w_vec
+        #print(phi)
         for j in range(k):
-            mu[:,j] = sum([w[i,j]*X[i,:] for i in range(n)]) # MLE for mu
+            mu[:,j] = sum([w[i,j]*X[i,:] if not math.isnan(w[i,j]) else 0 for i in range(n)]) # MLE for mu
             mu[:,j] = (1./sum_w_vec[j])*mu[:,j]
-            Sigma[:,:,j] = sum([w[i,j]*np.outer((X[i,:]-mu[:,j]),(X[i,:]-mu[:,j])) for i in range(n)])
+            Sigma[:,:,j] = sum([w[i,j]*np.outer((X[i,:]-mu[:,j]),(X[i,:]-mu[:,j])) if not math.isnan(w[i,j]) else 0 for i in range(n)])
             Sigma[:,:,j] = Sigma[:,:,j]/sum_w_vec[j]
         loss_cur = loss(X,w,mu,Sigma,phi) # z not important actually
         #print('mu_1',mu[:,0])
         #print('mu_2',mu[:,1])
+        #print(Sigma)
+        #print(mu)
     print('End Results:')
-    print('Sigma1: ',Sigma[:,:,0])
-    print('Sigma2: ',Sigma[:,:,1])
-    print('mu_1',mu[:,0])
-    print('mu_2',mu[:,1])
+    for i in range(1,k+1):
+        print('Sigma_{0}: {1}'.format(i-1,Sigma[:,:,i-1]))
+
+    for i in range(1,k+1):
+        print("mu_{0}: {1}".format(i-1,mu[:,i-1]))
     print('phi: ',phi)
 
     # Below only used for 2-D case
@@ -84,10 +119,20 @@ def main(train_path, valid_path, save_path):
 
     #x_eval,y_eval = util.load_dataset(valid_path, add_intercept=False)
     #util.plot(x_eval, y_eval, theta, save_path[:-4]+'.jpg', correction=1.0)
+    print('Now we find the chosen z values')
+    z = np.zeros(n)
+    for i in range(n):
+        z[i] = np.argmax(w[i,:])
+    print(z)
+    #z = np.repeat(z, 3)
+    t = np.arange(len(z))*(1./60)
 
+    csv_plotter.plot(t=t,data=z,xlabel=r'time ($s$)',ylabel='class',title='Classification')
+    csv_plotter.acc_plot(train_path)
 
 if __name__ == "__main__":
-    train_path = 'ds2_train.csv'
+    train_path = [r"..\data\front_back_overhand-60.csv"]
+    train_path.append(r"..\data\up_down_overhand-60.csv")
     valid_path = 'ds2_valid.csv'
     save_path = 'unsupervised_plot.txt'
     main(train_path, valid_path, save_path)
