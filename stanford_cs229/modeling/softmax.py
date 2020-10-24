@@ -3,7 +3,7 @@ from stanford_cs229.utils.util import *
 from datetime import datetime
 
 class SoftmaxRegression:
-    def __init__(self, lr=0.001, max_iter=1000000, eps=1e-15, verbose=False):
+    def __init__(self, lr=0.001, max_iter=1000000, eps=1e-15, verbose=True):
         self.theta = None
         self.lr = lr
         self.max_iter = max_iter
@@ -56,32 +56,8 @@ class SoftmaxRegression:
 
         while True:
             prev_theta = np.copy(self.theta)
-            self.theta += self.lr * self.gradient(X, Y)
-
-            num_iter += 1
-            update_size = np.linalg.norm(self.theta - prev_theta, ord=1)
-            if self.verbose:
-                print('Iteration {:n}, Update Size {:f}'.format(num_iter, update_size))
-            if num_iter > self.max_iter or np.isnan(update_size) or update_size < self.eps:
-                print('DONE TRAINING')
-                break
-        stop = datetime.now()
-        print('Time: {:n}', stop-start)
-
-    def train_vec(self, X, Y, k):
-        start = datetime.now()
-        n, d = X.shape
-        self.theta = np.zeros((d, k))
-
-        num_iter = 0
-
-        while True:
-            prev_theta = np.copy(self.theta)
             self.theta += self.lr * self.gradient_vec(X, Y)
 
-            print(self.gradient_vec(X, Y))
-            print(self.gradient(X, Y))
-
             num_iter += 1
             update_size = np.linalg.norm(self.theta - prev_theta, ord=1)
             if self.verbose:
@@ -90,14 +66,4 @@ class SoftmaxRegression:
                 print('DONE TRAINING')
                 break
         stop = datetime.now()
-        print('Time: {:n}', stop-start)
-
-def main():
-    X, Y = load_dataset('', add_intercept=True)
-    k = 1
-
-    softmax = SoftmaxRegression()
-    softmax.train(X, Y, k)
-
-if __name__ == '__main__':
-    main()
+        print('Time: {:n}'.format(stop-start))
