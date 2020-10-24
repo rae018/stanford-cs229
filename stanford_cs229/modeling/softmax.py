@@ -24,13 +24,13 @@ class SoftmaxRegression:
 
             probs = np.zeros(x.shape)
             for j in range(k):
-                probs += 1 / np.exp(np.matmul(self.theta[:,j].T, x))
-
+                probs += np.exp(np.matmul(self.theta[:,j].T, x))
+            probs = 1/probs
             for l in range(k):
                 result[:, l] = x * ((y == l) - np.exp(self.theta[:,l].T, x) * probs)
-        
+
         return result
-    
+
     def gradient_vec(self, X, Y):
         n, d = X.shape
         k = self.theta.shape[1]
@@ -53,7 +53,7 @@ class SoftmaxRegression:
 
         num_iter = 0
 
-        while True:                
+        while True:
             prev_theta = np.copy(self.theta)
             self.theta += self.lr * self.gradient_vec(X, Y)
 

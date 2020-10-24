@@ -29,7 +29,7 @@ def acc_plot(paths):
                         #sens2.append(int(row[4]))
                         #sens3.append(int(row[5]))
     else:
-        with open(path,'r') as csvfile:
+        with open(paths,'r') as csvfile:
             plots = csv.reader(csvfile, delimiter=',')
             print(plots)
             for idx, row in enumerate(plots):

@@ -63,7 +63,7 @@ def main(train_path, valid_path, save_path):
     for j in range(k):
         Sigma[:,:,j] = 50*np.identity(d) # Initialize Sigma to identity for invertibility
 
-    while np.abs(loss_prev-loss_cur)>10**(-5):
+    while np.abs(loss_prev-loss_cur)>10**(-3):
         loss_prev = loss_cur
         # E step
         for i in range(n):
@@ -102,7 +102,8 @@ def main(train_path, valid_path, save_path):
         #print('mu_2',mu[:,1])
         #print(Sigma)
         #print(mu)
-    print('End Results:')
+        print(loss_cur)
+    #print('End Results:')
     for i in range(1,k+1):
         print('Sigma_{0}: {1}'.format(i-1,Sigma[:,:,i-1]))
 
@@ -133,6 +134,8 @@ def main(train_path, valid_path, save_path):
 if __name__ == "__main__":
     train_path = [r"..\data\front_back_overhand-60.csv"]
     train_path.append(r"..\data\up_down_overhand-60.csv")
+    #train_path = r"..\data\up_down_weight-60.csv"
     valid_path = 'ds2_valid.csv'
     save_path = 'unsupervised_plot.txt'
     main(train_path, valid_path, save_path)
+    #csv_plotter.acc_plot(train_path)
