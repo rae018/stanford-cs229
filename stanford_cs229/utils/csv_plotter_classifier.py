@@ -8,16 +8,16 @@ def format_data(data):
   x_acc = data[:,0]
   y_acc = data[:,1]
   z_acc = data[:,2]
-  
+
   X_OFFSET = -346.3
   X_SCALE = 0.1536003738
-  
+
   Y_OFFSET = -333.5
   Y_SCALE = 0.1417651282
-  
+
   Z_OFFSET = -349.6
   Z_SCALE = 0.1442854621
-  
+
   x_acc = (x_acc - X_OFFSET) * X_SCALE
   y_acc = (y_acc - Y_OFFSET) * Y_SCALE
   z_acc = (z_acc - Z_OFFSET) * Z_SCALE
@@ -31,9 +31,15 @@ def format_data(data):
   tagY = []
   tagZ = []
 
-  y_down = -4 #threshold for categorizing motion in meters per second squared
-  y_up = 4
-  
+  y_down = 5 #threshold for categorizing motion in meters per second squared
+  y_up = 10
+
+  x_down = -5
+  x_up = 0
+
+  z_down = 5
+  z_up = 15
+
 
   class Directions(Enum):
     FRONT = 0
@@ -41,12 +47,26 @@ def format_data(data):
     NEUTRAL = 2
 
   for i in range(len(x_acc)):
-      if y_acc[i] < y_down:
-          tagY.append(Directions.FRONT.value)
-      elif y_acc[i] > y_up:
-          tagY.append(Directions.BACK.value)
-      else:
-          tagY.append(Directions.NEUTRAL.value)
+    if y_acc[i] < y_down:
+        tagY.append(Directions.FRONT.value)
+    elif y_acc[i] > y_up:
+        tagY.append(Directions.BACK.value)
+    else:
+        tagY.append(Directions.NEUTRAL.value)
+
+    if x_acc[i] < x_down:
+        tagX.append(Directions.FRONT.value)
+    elif x_acc[i] > x_up:
+        tagX.append(Directions.BACK.value)
+    else:
+        tagX.append(Directions.NEUTRAL.value)
+
+    if z_acc[i] < z_down:
+        tagZ.append(Directions.FRONT.value)
+    elif z_acc[i] > y_up:
+        tagZ.append(Directions.BACK.value)
+    else:
+        tagZ.append(Directions.NEUTRAL.value)
 
   return tagY
 
