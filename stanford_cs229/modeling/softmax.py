@@ -3,7 +3,7 @@ from stanford_cs229.utils.util import *
 from datetime import datetime
 
 class SoftmaxRegression:
-    def __init__(self, lr=0.001, max_iter=1000000, eps=1e-15, verbose=True):
+    def __init__(self, lr=0.01, max_iter=10000, eps=1e-15, verbose=True):
         self.theta = None
         self.lr = lr
         self.max_iter = max_iter
@@ -66,4 +66,4 @@ class SoftmaxRegression:
                 print('DONE TRAINING')
                 break
         stop = datetime.now()
-        print('Time: {:n}'.format(stop-start))
+        print('Time: {}'.format(stop-start))

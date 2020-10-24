@@ -17,15 +17,15 @@ def format_data(data):
 
   Z_OFFSET = -349.6
   Z_SCALE = 0.1442854621
-
-  x_acc = (x_acc - X_OFFSET) * X_SCALE
-  y_acc = (y_acc - Y_OFFSET) * Y_SCALE
-  z_acc = (z_acc - Z_OFFSET) * Z_SCALE
+  
+  x_acc = (x_acc + X_OFFSET) * X_SCALE
+  y_acc = (y_acc + Y_OFFSET) * Y_SCALE
+  z_acc = (z_acc + Z_OFFSET) * Z_SCALE
+  
 
   # This needs to be hard-coded in
   freq = 10
   delta_t = (1./60)
-
 
   tagX = []
   tagY = []
@@ -33,13 +33,7 @@ def format_data(data):
 
   y_down = 5 #threshold for categorizing motion in meters per second squared
   y_up = 10
-
-  x_down = -5
-  x_up = 0
-
-  z_down = 5
-  z_up = 15
-
+  
 
   class Directions(Enum):
     FRONT = 0
@@ -68,7 +62,7 @@ def format_data(data):
     else:
         tagZ.append(Directions.NEUTRAL.value)
 
-  return tagY
+  return np.array(tagY)
 
 # u = 0
 # u_begin = np.array([])
