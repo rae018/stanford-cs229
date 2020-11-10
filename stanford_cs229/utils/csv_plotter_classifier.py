@@ -17,23 +17,25 @@ def format_data(data):
 
   Z_OFFSET = -349.6
   Z_SCALE = 0.1442854621
-  
+
   x_acc = (x_acc + X_OFFSET) * X_SCALE
   y_acc = (y_acc + Y_OFFSET) * Y_SCALE
   z_acc = (z_acc + Z_OFFSET) * Z_SCALE
-  
+
 
   # This needs to be hard-coded in
   freq = 10
   delta_t = (1./60)
 
-  tagX = []
-  tagY = []
-  tagZ = []
+  #tagX = []
+  #tagY = []
+  #tagZ = []
+  tag = np.zeros(len(data[:,0]))
 
   y_down = 5 #threshold for categorizing motion in meters per second squared
   y_up = 10
-  
+  x_down = -5
+  x_up = 0
 
   class Directions(Enum):
     FRONT = 0
@@ -41,28 +43,54 @@ def format_data(data):
     NEUTRAL = 2
 
   for i in range(len(x_acc)):
+    mag_exceeded = 0
+    arg_exceeded = 0
     if y_acc[i] < y_down:
-        tagY.append(Directions.FRONT.value)
+        #tagY.append(Directions.FRONT.value)
+
+        mag_exceeded_cur = np.abs(y_down-y_acc[i])
+        if mag_exceeded_cur > mag_exceeded:
+            arg_exceeded = 1
+            mag_exceeded = mag_exceeded_cur
     elif y_acc[i] > y_up:
-        tagY.append(Directions.BACK.value)
-    else:
-        tagY.append(Directions.NEUTRAL.value)
+        #tagY.append(Directions.BACK.value)
+        mag_exceeded_cur = np.abs(y_up-y_acc[i])
+        if mag_exceeded_cur > mag_exceeded:
+            arg_exceeded = 2
+            mag_exceeded = mag_exceeded_cur
+    #else:
+        #tagY.append(Directions.NEUTRAL.value)
 
     if x_acc[i] < x_down:
-        tagX.append(Directions.FRONT.value)
+        #tagX.append(Directions.FRONT.value)
+        mag_exceeded_cur = np.abs(x_down-x_acc[i])
+        if mag_exceeded_cur > mag_exceeded:
+            arg_exceeded = 3
+            mag_exceeded = mag_exceeded_cur
     elif x_acc[i] > x_up:
-        tagX.append(Directions.BACK.value)
-    else:
-        tagX.append(Directions.NEUTRAL.value)
+        #tagX.append(Directions.BACK.value)
+        mag_exceeded_cur = np.abs(x_up-x_acc[i])
+        if mag_exceeded_cur > mag_exceeded:
+            arg_exceeded = 4
+            mag_exceeded = mag_exceeded_cur
+    #else:
+        #tagX.append(Directions.NEUTRAL.value)
 
+        """
     if z_acc[i] < z_down:
         tagZ.append(Directions.FRONT.value)
+        mag_exceeded = np.abs(z_down-z_acc[i])
+        arg_exceeded = 3
     elif z_acc[i] > y_up:
         tagZ.append(Directions.BACK.value)
     else:
         tagZ.append(Directions.NEUTRAL.value)
+        mag_exceeded = np.abs(z_up-z_acc[i])
+        arg_exceeded = 3
+        """
+    tag[i] = arg_exceeded
 
-  return np.array(tagY)
+  return tag
 
 # u = 0
 # u_begin = np.array([])

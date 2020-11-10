@@ -14,7 +14,6 @@ class SoftmaxRegression:
         pass
 
     def gradient(self, X, Y):
-        """ This doesn't work at the moment """
         n, d = X.shape
         k = self.theta.shape[1]
 
@@ -47,9 +46,12 @@ class SoftmaxRegression:
         exp = exp / np.expand_dims(np.sum(exp, 1), 1)
         return np.argmax(exp, 1)
 
-    def train(self, X, Y, k):
+    def train(self, X, Y, k, period=1):
         start = datetime.now()
         n, d = X.shape
+
+        n,d,X = reshape_data(X,period) # Obtain reshaped data as a result of period > 1
+
         self.theta = np.zeros((d, k))
 
         num_iter = 0

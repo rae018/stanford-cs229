@@ -98,3 +98,12 @@ def plot(x, y, theta, save_path, correction=1.0):
     plt.xlabel('x1')
     plt.ylabel('x2')
     plt.savefig(save_path)
+
+def reshape_data(X, period=1):
+    n, d = X.shape
+    new_n = int(n/period)
+    new_d = int(d*period)
+    split_X = np.vsplit(X, n) # Split rows of X by the size of period
+    split_X = [np.hstack(split_X[i]) for i in range(n)] # Combine the rows
+    X = np.vstack(split_X) # Finally, obtain X as the combined rows of data
+    return new_n, new_d, X
