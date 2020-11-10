@@ -7,20 +7,20 @@ import numpy as np
 def format_data(data):
   x_acc = data[:,0]
   y_acc = data[:,1]
-  z_acc = data[:,2]
+  #z_acc = data[:,2]
 
-  X_OFFSET = -346.3
+  X_OFFSET = -539.632
   X_SCALE = 0.1536003738
 
-  Y_OFFSET = -333.5
+  Y_OFFSET = -481.7735
   Y_SCALE = 0.1417651282
 
-  Z_OFFSET = -349.6
-  Z_SCALE = 0.1442854621
+  #Z_OFFSET = -349.6
+  #Z_SCALE = 0.1442854621
 
   x_acc = (x_acc + X_OFFSET) * X_SCALE
   y_acc = (y_acc + Y_OFFSET) * Y_SCALE
-  z_acc = (z_acc + Z_OFFSET) * Z_SCALE
+  #z_acc = (z_acc + Z_OFFSET) * Z_SCALE
 
 
   # This needs to be hard-coded in

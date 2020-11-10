@@ -20,11 +20,12 @@ class KMeans:
         # period is the number of rows of X included in a data point
         # If random is false, we hard-code the initial clusters
         start = datetime.now()
-        X = X[:,:3] # We only use first three columns
+        #X = X[:,:3] # We only use first three columns
+        X = X[:,:2]
         n, d = X.shape
         x_acc = X[:,0]
         y_acc = X[:,1]
-        z_acc = X[:,2]
+        #z_acc = X[:,2]
 
         if self.verbose:
             if n % period != 0:
@@ -38,7 +39,7 @@ class KMeans:
             for j in range(k):
                 mu = np.random.uniform()*(np.max(x_acc)-np.min(x_acc))+np.min(x_acc)
                 mu = np.hstack([mu,np.random.uniform()*(np.max(y_acc)-np.min(y_acc))+np.min(y_acc)])
-                mu = np.hstack([mu,np.random.uniform()*(np.max(z_acc)-np.min(z_acc))+np.min(z_acc)])
+                #mu = np.hstack([mu,np.random.uniform()*(np.max(z_acc)-np.min(z_acc))+np.min(z_acc)])
                 centroids[j,:] = np.tile(mu,period) # Establish random centroid
                 print(centroids[j,:])
         else:
@@ -48,14 +49,19 @@ class KMeans:
                     print('Nothing I can really do for you at this point :/')
             mid_x = (np.max(x_acc)+np.min(x_acc))/2
             mid_y = (np.max(y_acc)+np.min(y_acc))/2
-            mid_z = (np.max(z_acc)+np.min(z_acc))/2
-            mu_1 = np.array([np.min(x_acc),mid_y,mid_z])
-            mu_2 = np.array([np.max(x_acc),mid_y,mid_z])
-            mu_3 = np.array([mid_x,np.min(y_acc),mid_z])
-            mu_4 = np.array([mid_x,np.max(y_acc),mid_z])
+            #mid_z = (np.max(z_acc)+np.min(z_acc))/2
+            #mu_1 = np.array([np.min(x_acc),mid_y,mid_z])
+            #mu_2 = np.array([np.max(x_acc),mid_y,mid_z])
+            #mu_3 = np.array([mid_x,np.min(y_acc),mid_z])
+            #mu_4 = np.array([mid_x,np.max(y_acc),mid_z])
+            mu_1 = np.array([np.min(x_acc),mid_y])
+            mu_2 = np.array([np.max(x_acc),mid_y])
+            mu_3 = np.array([mid_x,np.min(y_acc)])
+            mu_4 = np.array([mid_x,np.max(y_acc)])
             #mu_5 = np.array([mid_x,mid_y,np.min(z_acc)])
             #mu_6 = np.array([mid_x,mid_y,np.max(z_acc)])
-            mu_7 = np.array([mid_x,mid_y,mid_z]) # The neutral centroid
+            #mu_7 = np.array([mid_x,mid_y,mid_z]) # The neutral centroid
+            mu_7 = np.array([mid_x,mid_y])
             #centroids = np.tile(np.vstack([mu_1,mu_2,mu_3,mu_4,mu_5,mu_6,mu_7]),period) # Tile by period
             centroids = np.tile(np.vstack([mu_1,mu_2,mu_3,mu_4,mu_7]),period) # Tile by period
         print(centroids)

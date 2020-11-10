@@ -107,3 +107,24 @@ def reshape_data(X, period=1):
     split_X = [np.hstack(split_X[i]) for i in range(n)] # Combine the rows
     X = np.vstack(split_X) # Finally, obtain X as the combined rows of data
     return new_n, new_d, X
+
+def preprocess_rolling_avg(X):
+    # Only x and y data for now
+    x_acc = X[:,0]
+    y_acc = X[:,1]
+
+    x_acc_end_avg = sum(X[-100:,0])/100
+    y_acc_end_avg = sum(X[-100:,1])/100
+
+    x_acc_avg_array = x_acc_end_avg*np.ones(len(X[:,0]))
+    y_acc_avg_array = y_acc_end_avg*np.ones(len(X[:,0]))
+
+    for k in range(len(X[:,0])-100):
+        x_window = X[k:100+k,0] # obtain 100 data points
+        x_acc_avg = sum(x_window)/100
+        x_acc_avg_array[k] = x_acc_avg
+        y_window = X[k:100+k,1] # obtain 100 data points
+        y_acc_avg = sum(y_window)/100
+        y_acc_avg_array[k] = y_acc_avg
+
+    return np.vstack([x_acc-x_acc_avg_array, y_acc-y_acc_avg_array]).T # Returned preprocessed data
