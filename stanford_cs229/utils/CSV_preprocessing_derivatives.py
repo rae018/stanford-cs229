@@ -3,7 +3,7 @@ import numpy as np
 
 samples = 100 #max number of entries to use in calculating a rolling average
 
-fileName = "ydeskx_overhand_weight_4-60Hz"
+fileName = "desk_overhand_weight_4-60Hz"
 
 fileName_new = fileName + "_derivatives.csv"
 
@@ -41,7 +41,9 @@ with open(fileName,mode='r') as csvfile: #reading from original file
 
             if idx <= 1: #rolling average values of each muscle signal
                 for indice in range(len(muscles)):
-                    fila += muscles[indice] + "," #initial values are entry/1
+                    fila += muscles[indice] #initial values are entry/1
+                    if indice < len(muscles)-1: #if this isn't the last entry in the row
+                        fila += "," #separate from next entry in the row
                 #prev_row.append(muscles[indice]) #store first values for next iteration
                 window = np.array([float(ele) for ele in muscles])
             else:
@@ -54,7 +56,9 @@ with open(fileName,mode='r') as csvfile: #reading from original file
 
                 for indice in range(len(muscles)): #rolling average values of each muscle signal
                     integrada = sum(window[:,indice])/len(window[:,indice]) #rolling average for relevant entries
-                    fila += str(integrada) + ","
+                    fila += str(integrada)
+                    if indice < len(muscles)-1:
+                        fila += ","
 
             file.write(fila + "\n") #append new columns
         else: #if idx == 0
@@ -66,8 +70,13 @@ with open(fileName,mode='r') as csvfile: #reading from original file
                 fila += header + ","
             for header in row[-4:]:
                 fila += header + " derivatives,"
+
+            ctr = 0
             for header in row[-4:]:
-                fila += header + " rolling averages,"
+                ctr += 1
+                fila += header + " rolling averages"
+                if ctr < len(row[-4:]):
+                    fila += ","
             file.write(fila + "\n") #write column headers with a new line
             prev_row = [] #initialize preceding row for derivative approximation
 
