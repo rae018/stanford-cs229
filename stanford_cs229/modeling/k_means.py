@@ -41,7 +41,6 @@ class KMeans:
                 mu = np.hstack([mu,np.random.uniform()*(np.max(y_acc)-np.min(y_acc))+np.min(y_acc)])
                 #mu = np.hstack([mu,np.random.uniform()*(np.max(z_acc)-np.min(z_acc))+np.min(z_acc)])
                 centroids[j,:] = np.tile(mu,period) # Establish random centroid
-                print(centroids[j,:])
         else:
             if k!=5:
                 if self.verbose:
@@ -64,7 +63,6 @@ class KMeans:
             mu_7 = np.array([mid_x,mid_y])
             #centroids = np.tile(np.vstack([mu_1,mu_2,mu_3,mu_4,mu_5,mu_6,mu_7]),period) # Tile by period
             centroids = np.tile(np.vstack([mu_1,mu_2,mu_3,mu_4,mu_7]),period) # Tile by period
-        print(centroids)
         num_iter = 0
 
         loss = 0
@@ -83,9 +81,10 @@ class KMeans:
                 mu_j /= sum((assignments==j))
                 centroids[j,:] = mu_j
             num_iter += 1
-            if self.verbose: print('iteration: {}'.format(num_iter))
-            loss = self.loss(X, assignments, centroids)
-            print(loss)
+            if self.verbose: 
+              print('Iteration: {}'.format(num_iter), end='')
+              loss = self.loss(X, assignments, centroids)
+              print(', Loss: {}'.format(loss))
 
         stop = datetime.now()
         print('Time: {}'.format(stop-start))

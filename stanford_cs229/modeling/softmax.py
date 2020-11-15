@@ -35,7 +35,7 @@ class SoftmaxRegression:
         k = self.theta.shape[1]
 
         Y2 = np.zeros((n, k))
-        Y2[np.arange(n), Y] = 1
+        Y2[np.arange(n, dtype='int32'), Y] = 1
 
         exp = np.exp(np.matmul(X, self.theta))
         exp = exp / np.expand_dims(np.sum(exp, 1), 1)
@@ -50,7 +50,8 @@ class SoftmaxRegression:
         start = datetime.now()
         n, d = X.shape
 
-        n,d,X = reshape_data(X,period) # Obtain reshaped data as a result of period > 1
+        # Obtain reshaped data as a result of period > 1
+        n, d, X = reshape_data(X, period)
 
         self.theta = np.zeros((d, k))
 
@@ -65,7 +66,6 @@ class SoftmaxRegression:
             if self.verbose:
                 print('Iteration {:n}, Update Size {:f}'.format(num_iter, update_size))
             if num_iter > self.max_iter or np.isnan(update_size) or update_size < self.eps:
-                print('DONE TRAINING')
                 break
         stop = datetime.now()
-        print('Time: {}'.format(stop-start))
+        print('Training Time: {}'.format(stop-start))

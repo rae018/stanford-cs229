@@ -128,3 +128,13 @@ def preprocess_rolling_avg(X):
         y_acc_avg_array[k] = y_acc_avg
 
     return np.vstack([x_acc-x_acc_avg_array, y_acc-y_acc_avg_array]).T # Returned preprocessed data
+  
+def cmap(Y):
+    C = np.ndarray(Y.shape, dtype=object)
+    C[np.argwhere(Y==0)] = '#34c4c9'
+    C[Y==1] = '#a8dadc'
+    C[Y==2] = '#d9d9d9'
+    C[Y==3] = '#457b9d'
+    C[Y==4] = '#e63946'
+    return C
+  
