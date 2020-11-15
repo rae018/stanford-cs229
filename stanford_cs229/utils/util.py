@@ -131,10 +131,10 @@ def preprocess_rolling_avg(X):
   
 def cmap(Y):
     C = np.ndarray(Y.shape, dtype=object)
-    C[np.argwhere(Y==0)] = '#34c4c9'
-    C[Y==1] = '#a8dadc'
-    C[Y==2] = '#d9d9d9'
-    C[Y==3] = '#457b9d'
+    C[np.argwhere(Y==0)] = '#457b9d'
+    C[Y==1] = '#d9d9d9'
+    C[Y==2] = '#a8dadc'
+    C[Y==3] = '#5fa390'
     C[Y==4] = '#e63946'
     return C
   
