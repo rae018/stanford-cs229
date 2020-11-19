@@ -20,10 +20,10 @@ def update_state(state, learning_rate, x_i, y_i, radius):
 
     Args:
         state: The state returned from initial_state()
-        kernel: A binary function that takes two vectors as input and returns the result of a kernel
         learning_rate: The learning rate for the update
         x_i: A vector containing the features for a single instance
         y_i: A 0 or 1 indicating the label for a single instance
+        radius: The radius for the RBF kernel
     """
     betas = state['betas']
     xs = state['xs']
@@ -65,8 +65,8 @@ def train_perceptron(X, Y, learning_rate=0.5, radius=0.1):
     The output plots are saved to src/perceptron/perceptron_{kernel_name}_output.pdf.
 
     Args:
-        kernel: The kernel function.
         learning_rate: The learning rate for training.
+        radius: The radius for the RBF kernel
     """
     _, dim = X.shape
     state = initial_state(dim)
@@ -86,9 +86,8 @@ def predict_perceptron(state, x_i, radius=0.1):
 
     Args:
         state: The state returned from initial_state()
-        kernel: A binary function that takes two vectors as input and returns
-            the result of a kernel
         x_i: A vector containing the features for a single instance
+        radius: The radius for the RBF kernel
 
     Returns:
         Returns the prediction (i.e 0 or 1)
