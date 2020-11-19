@@ -73,7 +73,7 @@ def train_perceptron(X, Y, learning_rate=0.5, radius=0.1):
     
     iteration = 0
     for x_i, y_i in zip(X, Y):
-        if iteration % 100 == 0:
+        if iteration % 1000 == 0:
           print('Completed {} iterations'.format(iteration))
         update_state(state, learning_rate, x_i, y_i, radius)
         iteration += 1

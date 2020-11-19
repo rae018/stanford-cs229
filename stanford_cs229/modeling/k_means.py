@@ -62,7 +62,8 @@ class KMeans:
             #mu_7 = np.array([mid_x,mid_y,mid_z]) # The neutral centroid
             mu_7 = np.array([mid_x,mid_y])
             #centroids = np.tile(np.vstack([mu_1,mu_2,mu_3,mu_4,mu_5,mu_6,mu_7]),period) # Tile by period
-            centroids = np.tile(np.vstack([mu_1,mu_2,mu_3,mu_4,mu_7]),period) # Tile by period
+            centroids = np.tile(np.vstack([mu_7,mu_3,mu_1,mu_2,mu_4]),period) # Tile by period
+            # [ blue, grey, light green, green, red ]
         num_iter = 0
 
         loss = 0
